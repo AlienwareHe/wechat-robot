@@ -8,3 +8,10 @@
 # 原理
 - sekiro 通过sekiro建议服务端与手机上WX的长连接作为RPC调用通信通道
 - 通过Hook框架如EdXposed、SandHook等等注入sekiro，并反射调用WX相关API，本项目使用的是QContainer(自己写的一个免Root手机上运行的应用分身和设备指纹框架)，如果想要迁移，只需替换相关Xposed API即可
+
+# 使用
+对于QContain版来说：
+1. 手机安装「感染」后的微信和QContainer
+2. 修改插件中的com.alien.crack_wechat_robot.WechatHook.SEKIRO_HOST和SEKIRO_PORT，并安装插件至手机
+3. 在QContainer中勾选插件生效
+4. 打开微信，查看adb logcat -s WX_HOOK查看插件是否正常生效
