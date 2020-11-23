@@ -15,3 +15,15 @@
 2. 修改插件中的com.alien.crack_wechat_robot.WechatHook.SEKIRO_HOST和SEKIRO_PORT，并安装插件至手机
 3. 在QContainer中勾选插件生效
 4. 打开微信，查看adb logcat -s WX_HOOK查看插件是否正常生效
+
+# 运维
+## 查看设备长连接是否在线
+> http://sz.clickdream.top:9602/natChannelStatus?group=WECHAT_ROBOT
+
+## 查看设备当前截图
+> http://sz.clickdream.top:9602/invoke?group=WECHAT_ROBOT&action=screenShot
+
+## 重启微信
+在长连接断线的情况下（一般情况下只要应用存活就不会出现这种情况），可以尝试重启微信重新注册长连接：
+> adb shell am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI
+> adb shell am am force-stop com.tencent.mm
