@@ -28,7 +28,7 @@ public class MessageAction implements SekiroRequestHandler {
     private static Object chattingInfo;
     private static Object chatFooterEventListener;
     private static Object chatFooter;
-    private static SendMessageHandler sendMessageHandler = new SendMessageHandler();
+    private static final SendMessageHandler sendMessageHandler = SendMessageHandler.getHandler();
 
     @AutoBind
     private String content;
@@ -103,9 +103,10 @@ public class MessageAction implements SekiroRequestHandler {
     }
 
     public static void postMessage(final String content, final String receiverWxId) {
-        WechatMessage wechatMessage = new WechatMessage(content,receiverWxId);
+        WechatMessage wechatMessage = new WechatMessage(content, receiverWxId);
         Message message = Message.obtain();
         message.obj = wechatMessage;
+        Log.i(WechatHook.TAG, "post message:" + wechatMessage);
         sendMessageHandler.sendMessage(message);
     }
 

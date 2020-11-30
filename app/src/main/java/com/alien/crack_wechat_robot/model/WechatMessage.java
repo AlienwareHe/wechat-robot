@@ -11,4 +11,12 @@ public class WechatMessage {
         this.content = content;
         this.receiverWxId = receiverWxId;
     }
+
+    @Override
+    public String toString() {
+        return "WechatMessage{" +
+                "content='" + content + '\'' +
+                ", receiverWxId='" + receiverWxId + '\'' +
+                '}';
+    }
 }
