@@ -41,6 +41,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    packagingOptions {
+        exclude 'META-INF/*******'
+        exclude 'META-INF/INDEX.LIST'
+    }
 }
 
 dependencies {
@@ -55,5 +60,6 @@ dependencies {
 
     implementation 'com.virjar:sekiro-api:1.0.0'
     implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     api(name: 'com.camel.api_1.4.6', ext: 'aar')
 }

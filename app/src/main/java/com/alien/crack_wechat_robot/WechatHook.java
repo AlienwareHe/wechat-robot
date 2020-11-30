@@ -13,6 +13,11 @@ import com.alien.crack_wechat_robot.hook.MessageReceiveHook;
 import com.alien.crack_wechat_robot.service.WxContactService;
 import com.camel.api.CamelToolKit;
 import com.camel.api.SharedObject;
+import com.camel.api.extensions.superappium.PageTriggerManager;
+import com.camel.api.extensions.superappium.sekiro.DumpTopActivityHandler;
+import com.camel.api.extensions.superappium.sekiro.DumpTopFragmentHandler;
+import com.camel.api.extensions.superappium.sekiro.ExecuteJsOnWebViewHandler;
+import com.camel.api.extensions.superappium.sekiro.ScreenShotHandler;
 import com.camel.api.rposed.IRposedHookLoadPackage;
 import com.camel.api.rposed.RC_MethodHook;
 import com.camel.api.rposed.RposedBridge;
@@ -99,10 +104,12 @@ public class WechatHook implements IRposedHookLoadPackage {
     }
 
     private static void registerSekiroService() {
+        PageTriggerManager.setDisable(false);
         // 注册长连接
         sekiroClient1 = SekiroClient.start(SEKIRO_HOST, SEKIRO_PORT, clientId, "WECHAT_ROBOT");
         sekiroClient1.registerHandler("sendMessage", new MessageAction());
         sekiroClient1.registerHandler("findContactInfo", new ContactInfoAction());
+        sekiroClient1.registerHandler("screenShot", new ScreenShotHandler());
 
         Log.i(WechatHook.TAG, "本地HTTP服务已启动");
     }

@@ -3,15 +3,36 @@ package com.alien.crack_wechat_robot.hook;
 import android.content.ContentValues;
 import android.util.Log;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.alien.crack_wechat_robot.WechatHook;
+import com.alien.crack_wechat_robot.action.MessageAction;
+import com.alien.crack_wechat_robot.model.InteractionResult;
+import com.alien.crack_wechat_robot.util.OkHttpUtil;
 import com.camel.api.SharedObject;
 import com.camel.api.rposed.RC_MethodHook;
 import com.camel.api.rposed.RposedHelpers;
+
+import java.io.IOException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * 消息拦截
  */
 public class MessageReceiveHook {
+
+    private static final String serverUrl = "http://192.168.50.223:233/interaction/interact?talkContent=";
+
+    private static OkHttpUtil client = new OkHttpUtil();
+
+    static  {
+        client = new OkHttpUtil();
+    }
+
     public static void hook() {
         try {
             internalHook();
@@ -71,8 +92,49 @@ public class MessageReceiveHook {
                 final String msgId = contentValues.getAsString("msgId");
                 final String createTime = contentValues.getAsString("createTime");
                 Log.i(WechatHook.TAG, talker + " send message:" + content);
+                try {
+                    interact(content, talker);
+                } catch (Exception e) {
+                    Log.i(WechatHook.TAG, "all出现异常: " + e.getMessage(), e);
+                }
+//                Log.i(WechatHook.TAG, talker + " send message:" + content + " = = 让我康康");
+
             }
         });
+    }
+
+    private static void interact(String talkContent, String talker) throws Exception{
+        Log.i(WechatHook.TAG, "开始处理对话");
+        Response response = client.httpResponeBody(serverUrl + talkContent, OkHttpUtil.HttpMethod.GET);
+        if (response.body() == null) {
+            MessageAction.sendMessage("请求结果为空", talker);
+            return;
+        }
+        String resp = null;
+        try {
+            resp = response.body().string();
+        } catch (IOException e) {
+            Log.i(WechatHook.TAG, "出现异常: " + e.getMessage(), e);
+            MessageAction.sendMessage("获取body内容失败", talker);
+            return;
+        }
+        Log.i(WechatHook.TAG, "请求小完大脑返回数据: " + resp);
+        InteractionResult<String> result = JSON.parseObject(resp, new TypeReference<InteractionResult<String>>() {
+        });
+        if (result == null) {
+            MessageAction.sendMessage("解析结果为空", talker);
+            return;
+        }
+        if (result.getCode() == 1000) {
+            return;
+        }
+        if (result.getCode() == 1001) {
+            MessageAction.sendMessage(result.getData(), talker);
+            return;
+        }
+        if (result.getCode() == 9999) {
+            MessageAction.sendMessage("处理出错, 错误: " + result.getMsg(), talker);
+        }
     }
 
 
