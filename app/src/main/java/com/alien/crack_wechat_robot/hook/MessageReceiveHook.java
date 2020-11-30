@@ -107,7 +107,7 @@ public class MessageReceiveHook {
         Log.i(WechatHook.TAG, "开始处理对话");
         Response response = client.httpResponeBody(serverUrl + talkContent, OkHttpUtil.HttpMethod.GET);
         if (response.body() == null) {
-            MessageAction.sendMessage("请求结果为空", talker);
+            MessageAction.postMessage("请求结果为空", talker);
             return;
         }
         String resp = null;
@@ -115,25 +115,25 @@ public class MessageReceiveHook {
             resp = response.body().string();
         } catch (IOException e) {
             Log.i(WechatHook.TAG, "出现异常: " + e.getMessage(), e);
-            MessageAction.sendMessage("获取body内容失败", talker);
+            MessageAction.postMessage("获取body内容失败", talker);
             return;
         }
         Log.i(WechatHook.TAG, "请求小完大脑返回数据: " + resp);
         InteractionResult<String> result = JSON.parseObject(resp, new TypeReference<InteractionResult<String>>() {
         });
         if (result == null) {
-            MessageAction.sendMessage("解析结果为空", talker);
+            MessageAction.postMessage("解析结果为空", talker);
             return;
         }
         if (result.getCode() == 1000) {
             return;
         }
         if (result.getCode() == 1001) {
-            MessageAction.sendMessage(result.getData(), talker);
+            MessageAction.postMessage(result.getData(), talker);
             return;
         }
         if (result.getCode() == 9999) {
-            MessageAction.sendMessage("处理出错, 错误: " + result.getMsg(), talker);
+            MessageAction.postMessage("处理出错, 错误: " + result.getMsg(), talker);
         }
     }
 

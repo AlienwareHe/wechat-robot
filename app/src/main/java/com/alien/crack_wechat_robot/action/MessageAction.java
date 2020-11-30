@@ -2,11 +2,13 @@ package com.alien.crack_wechat_robot.action;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 
 import com.alibaba.fastjson.JSON;
 import com.alien.crack_wechat_robot.WechatHook;
 import com.alien.crack_wechat_robot.model.ApiResponse;
+import com.alien.crack_wechat_robot.model.WechatMessage;
 import com.alien.crack_wechat_robot.service.WxContactService;
 import com.alien.crack_wechat_robot.util.UnicodeUtil;
 import com.camel.api.SharedObject;
@@ -26,6 +28,7 @@ public class MessageAction implements SekiroRequestHandler {
     private static Object chattingInfo;
     private static Object chatFooterEventListener;
     private static Object chatFooter;
+    private static SendMessageHandler sendMessageHandler = new SendMessageHandler();
 
     @AutoBind
     private String content;
@@ -90,18 +93,23 @@ public class MessageAction implements SekiroRequestHandler {
                 return;
             }
         }
-        sendMessage(formatMessage(content), receiverWxId);
+        postMessage(formatMessage(content), receiverWxId);
         sekiroResponse.send(CommonRes.success("消息发送完毕"));
     }
 
     private static String formatMessage(String message) {
         // unicode换行符
-
-        String formattedMessage = message.replaceAll("/r/n", UnicodeUtil.unicode2String("\\ua"));
-        return formattedMessage;
+        return message.replaceAll("/r/n", UnicodeUtil.unicode2String("\\ua"));
     }
 
-    public static ApiResponse sendMessage(final String message, final String receiverWxId) {
+    public static void postMessage(final String content, final String receiverWxId) {
+        WechatMessage wechatMessage = new WechatMessage(content,receiverWxId);
+        Message message = Message.obtain();
+        message.obj = wechatMessage;
+        sendMessageHandler.sendMessage(message);
+    }
+
+    public static void sendMessage(final String message, final String receiverWxId) {
         /**
          * 一定要在UI线程中去发送，因为在构造newChatFooterEventListener的时候会需要获取MainLooper
          */
@@ -128,6 +136,5 @@ public class MessageAction implements SekiroRequestHandler {
                 }
             }
         });
-        return apiResponse;
     }
 }
