@@ -10,7 +10,8 @@ import androidx.annotation.NonNull;
 
 import com.alien.crack_wechat_robot.WechatHook;
 import com.alien.crack_wechat_robot.model.WechatMessage;
-import com.blankj.utilcode.util.StringUtils;
+
+import camel.external.org.apache.commons.lang3.StringUtils;
 
 public class SendMessageHandler extends Handler {
 
@@ -44,7 +45,7 @@ public class SendMessageHandler extends Handler {
             return;
         }
         Log.i(WechatHook.TAG, "SendMessageHandler receive send message:" + wechatMessage);
-        MessageAction.sendMessage(wechatMessage.content, wechatMessage.receiverWxId);
+        MessageAction.sendMessage(wechatMessage);
         try {
             if (!StringUtils.equals(wechatMessage.receiverWxId, lastReceiver)) {
                 Thread.sleep(SEND_INTERVAL_MILLION_SECONDS);

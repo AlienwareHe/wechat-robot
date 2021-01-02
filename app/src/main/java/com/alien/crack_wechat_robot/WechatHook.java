@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.alien.crack_wechat_robot.action.ContactInfoAction;
 import com.alien.crack_wechat_robot.action.MessageAction;
+import com.alien.crack_wechat_robot.db.DbHelper;
 import com.alien.crack_wechat_robot.hook.MessageReceiveHook;
 import com.alien.crack_wechat_robot.service.WxContactService;
 import com.camel.api.CamelToolKit;
@@ -53,15 +54,19 @@ public class WechatHook implements IRposedHookLoadPackage {
         Log.i(WechatHook.TAG, "wechat Main process hook start");
         try {
             clientId = genDeviceId(SharedObject.context);
-            logicHook();
+            RposedHelpers.findAndHookMethod("com.tencent.tinker.loader.app.TinkerApplication", lpparam.classLoader, "onCreate", new RC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    logicHook();
+                }
+            });
         } catch (Throwable e) {
             Log.e(WechatHook.TAG, "logic hook exception", e);
         }
     }
 
     private static void logicHook() {
-        WxContactService.init();
-        ValidateHook.hook();
+        DbHelper.init();
         registerSekiroService();
         MessageReceiveHook.hook();
         Log.i(WechatHook.TAG, "logic hook end");
@@ -69,35 +74,7 @@ public class WechatHook implements IRposedHookLoadPackage {
 
     private static void testHook() {
         try {
-            /**
-             * 监听SocketTask收到的消息事件，并处理酒店报价
-             * @see 小程序API：SocketTask.onMessage(function callback)
-             */
-            RposedHelpers.findAndHookMethod(RposedHelpers.findClass("com.tencent.mm.network.t",
-                    SharedObject.loadPackageParam.classLoader), "dt",
-                    boolean.class, new RC_MethodHook() {
-                        @Override
-                        protected void beforeHookedMethod(RC_MethodHook.MethodHookParam param) {
-                            try {
-                                final Object data = param.args[0];
-                                if (data instanceof String) {
-                                    Log.i(WechatHook.TAG, "capture wss response:" + data);
-                                } else {
-                                    Log.i(WechatHook.TAG, "capture wss data type:" + data.getClass().getName());
-                                }
-                            } catch (Throwable e) {
-                                Log.e(WechatHook.TAG, "hook wss data error", e);
-                            }
-                        }
-                    });
 
-            RposedBridge.hookAllMethods(RposedHelpers.findClass("com.tencent.mm.xlog.app.XLogSetup", SharedObject.loadPackageParam.classLoader), "keep_setupXLog", new RC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    param.args[5] = true;
-                    Log.i(WechatHook.TAG, "change xlogcat open");
-                }
-            });
         } catch (Throwable e) {
             Log.e(WechatHook.TAG, "hook websocket error", e);
         }

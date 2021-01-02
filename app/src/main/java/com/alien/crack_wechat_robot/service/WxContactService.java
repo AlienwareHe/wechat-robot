@@ -5,6 +5,7 @@ import android.database.DatabaseUtils;
 import android.util.Log;
 
 import com.alien.crack_wechat_robot.WechatHook;
+import com.alien.crack_wechat_robot.db.DbHelper;
 import com.camel.api.SharedObject;
 import com.camel.api.rposed.RC_MethodHook;
 import com.camel.api.rposed.RposedHelpers;
@@ -19,27 +20,6 @@ import camel.external.org.apache.commons.lang3.StringUtils;
  */
 public class WxContactService {
 
-    private static Object wxDbMapper;
-
-    /**
-     * 尽可能早的调用，防止错过aj构造的时机
-     */
-    public static void init() {
-        try {
-            RposedHelpers.findAndHookConstructor("com.tencent.mm.storage.aj", SharedObject.loadPackageParam.classLoader, "com.tencent.mm.cf.h", new RC_MethodHook() {
-                @Override
-                protected void afterHookedMethod(RC_MethodHook.MethodHookParam param) throws Throwable {
-                    Log.i(WechatHook.TAG, "weixin db mapper hooked");
-                    if (wxDbMapper == null) {
-                        wxDbMapper = RposedHelpers.getObjectField(param.thisObject, "db");
-                    }
-                }
-            });
-        } catch (Throwable e) {
-            Log.e(WechatHook.TAG, "load WxContactService cinit method error!", e);
-        }
-    }
-
     /**
      * 根据微信昵称查询微信号
      *
@@ -47,10 +27,6 @@ public class WxContactService {
      * @return if exec error or parameter is illegal or not find, result may be null
      */
     public static String findWxIdByNickName(String nickname) {
-        if (wxDbMapper == null) {
-            Log.e(WechatHook.TAG, "wx db mapper is null");
-            return null;
-        }
         if (StringUtils.isBlank(nickname)) {
             return null;
         }
@@ -79,7 +55,7 @@ public class WxContactService {
         Log.i(WechatHook.TAG, "db exec:" + sql);
         // 第三个参数2尚不知具体意义
         try {
-            return (Cursor) RposedHelpers.callMethod(wxDbMapper, "a", sql, null, 2);
+            return (Cursor) RposedHelpers.callMethod(DbHelper.getInstance().getConnection(), "a", sql, null, 2);
         } catch (Throwable e) {
             Log.e(WechatHook.TAG, "wx db mapper exec error", e);
             return null;

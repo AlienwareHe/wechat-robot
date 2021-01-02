@@ -4,6 +4,9 @@ public class WechatMessage {
 
     public String content;
     public String receiverWxId;
+    public int msgType;
+    public Boolean isGroup;
+    public String atWechatIds;
 
     public WechatMessage(){}
 
