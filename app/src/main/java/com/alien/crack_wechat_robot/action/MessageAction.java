@@ -148,7 +148,7 @@ public class MessageAction implements SekiroRequestHandler {
     public static void sendMessage(WechatMessage wechatMessage) {
         switch (wechatMessage.msgType) {
             case ChatConstant.SEND_TYPE_TEXT:
-                if (wechatMessage.isGroup != null && wechatMessage.isGroup) {
+                if (wechatMessage.isGroup) {
                     String atIds = wechatMessage.atWechatIds;
                     String content = wechatMessage.content;
                     if (TextUtils.isEmpty(atIds) || atIds.equals("null")) {
@@ -167,6 +167,8 @@ public class MessageAction implements SekiroRequestHandler {
                     sendRawText(wechatMessage.receiverWxId, wechatMessage.content);
                 }
                 break;
+            case ChatConstant.SEND_TYPE_IMAGE:
+                ChatHelper.downloadAndSendImageFile(wechatMessage.imageUrl,wechatMessage.receiverWxId,wechatMessage.md5);
             default:
                 break;
         }

@@ -5,8 +5,16 @@ public class WechatMessage {
     public String content;
     public String receiverWxId;
     public int msgType;
-    public Boolean isGroup;
+    public boolean isGroup;
     public String atWechatIds;
+    /**
+     * 图片下载链接
+     */
+    public String imageUrl;
+    /**
+     * 图片MD5，带MD5可以避免重复下载
+     */
+    public String md5;
 
     public WechatMessage(){}
 

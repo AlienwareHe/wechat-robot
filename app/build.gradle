@@ -62,4 +62,5 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     api(name: 'com.camel.api_1.4.6', ext: 'aar')
+    api "com.liulishuo.okdownload:okdownload:1.0.7"
 }

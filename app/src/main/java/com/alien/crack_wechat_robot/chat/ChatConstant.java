@@ -34,7 +34,7 @@ public class ChatConstant {
     static final int SEND_TYPE_XML = -10;
     static final int SEND_TYPE_OTHER = -1;
     public static final int SEND_TYPE_TEXT = 0;
-    static final int SEND_TYPE_IMAGE = 1;
+    public static final int SEND_TYPE_IMAGE = 1;
     static final int SEND_TYPE_AUDIO = 2;
     static final int SEND_TYPE_VIDEO = 3;
     static final int SEND_TYPE_CARD = 4;
