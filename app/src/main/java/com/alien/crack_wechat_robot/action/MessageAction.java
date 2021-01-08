@@ -39,6 +39,12 @@ public class MessageAction implements SekiroRequestHandler {
     private Boolean isGroup;
     @AutoBind
     private String atWechatIds;
+    @AutoBind
+    private String imageUrl;
+    @AutoBind
+    private String md5;
+    @AutoBind
+    private int msgType;
 
     /**
      * 根据微信Id查询用户信息
@@ -59,11 +65,6 @@ public class MessageAction implements SekiroRequestHandler {
 
     @Override
     public void handleRequest(SekiroRequest invokeRequest, SekiroResponse sekiroResponse) {
-        if (StringUtils.isEmpty(content)) {
-            Log.i(WechatHook.TAG, "message content cannot be empty");
-            sekiroResponse.send(CommonRes.failed("message content cannot be empty"));
-            return;
-        }
         if (StringUtils.isBlank(receiverWxId)) {
             receiverWxId = WxContactService.findWxIdByNickName(receiverNickname);
             if (StringUtils.isBlank(receiverWxId)) {
@@ -75,6 +76,9 @@ public class MessageAction implements SekiroRequestHandler {
         WechatMessage wechatMessage = new WechatMessage(content, receiverWxId);
         wechatMessage.isGroup = isGroup;
         wechatMessage.atWechatIds = atWechatIds;
+        wechatMessage.msgType = msgType;
+        wechatMessage.imageUrl = imageUrl;
+        wechatMessage.md5 = md5;
         postMessage(wechatMessage);
         sekiroResponse.send(CommonRes.success("消息发送完毕"));
     }
@@ -168,7 +172,16 @@ public class MessageAction implements SekiroRequestHandler {
                 }
                 break;
             case ChatConstant.SEND_TYPE_IMAGE:
-                ChatHelper.downloadAndSendImageFile(wechatMessage.imageUrl,wechatMessage.receiverWxId,wechatMessage.md5);
+                try {
+                    if (TextUtils.isEmpty(wechatMessage.imageUrl)) {
+                        Log.e(WechatHook.TAG, "发送图片下载链接不能为空:" + wechatMessage);
+                        return;
+                    }
+                    ChatHelper.downloadAndSendImageFile(wechatMessage.imageUrl, wechatMessage.receiverWxId, wechatMessage.md5);
+                } catch (Throwable e) {
+                    Log.e(WechatHook.TAG, "downloadAndSendImageFile error:" + wechatMessage, e);
+                }
+                break;
             default:
                 break;
         }
