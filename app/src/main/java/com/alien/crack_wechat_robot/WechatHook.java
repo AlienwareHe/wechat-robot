@@ -28,7 +28,7 @@ import com.virjar.sekiro.api.SekiroClient;
 
 public class WechatHook implements IRposedHookLoadPackage {
 
-    public static final String TAG = "WX_HOOK";
+    public static final String TAG = "WX_HOOK_PUBLIC";
 
     /**
      * FIXME 具体替换为对应的Sekiro服务端域名
@@ -81,12 +81,10 @@ public class WechatHook implements IRposedHookLoadPackage {
     }
 
     private static void registerSekiroService() {
-        PageTriggerManager.setDisable(false);
         // 注册长连接
         sekiroClient1 = SekiroClient.start(SEKIRO_HOST, SEKIRO_PORT, clientId, "WECHAT_ROBOT");
         sekiroClient1.registerHandler("sendMessage", new MessageAction());
         sekiroClient1.registerHandler("findContactInfo", new ContactInfoAction());
-        sekiroClient1.registerHandler("screenShot", new ScreenShotHandler());
 
         Log.i(WechatHook.TAG, "本地HTTP服务已启动");
     }
