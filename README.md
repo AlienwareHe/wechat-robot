@@ -45,4 +45,5 @@
 ## 重启微信
 在长连接断线的情况下（一般情况下只要应用存活就不会出现这种情况），可以尝试重启微信重新注册长连接：
 > adb shell am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI
+
 > adb shell am force-stop com.tencent.mm
