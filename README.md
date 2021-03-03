@@ -20,10 +20,14 @@
 ## 查看设备长连接是否在线
 > http://sz.clickdream.top:9602/natChannelStatus?group=WECHAT_ROBOT
 
-## 查看设备当前截图
-> http://sz.clickdream.top:9602/invoke?group=WECHAT_ROBOT&action=screenShot
-
 ## 重启微信
 在长连接断线的情况下（一般情况下只要应用存活就不会出现这种情况），可以尝试重启微信重新注册长连接：
 > adb shell am start -n com.tencent.mm/com.tencent.mm.ui.LauncherUI
 > adb shell am force-stop com.tencent.mm
+
+## 快速试用QContainer版
+如果你不想改API或者想试试效果，可以使用本项目提供的weixin.qc.apk（微信版本：7.0.21_1800）快速在安卓7～安卓10上使用本项目，使用方法：
+1. 安装QContainer Manager（链接:https://pan.baidu.com/s/16Siy1SnTnBwM7LyEOgjzvw  密码:xw9r）和本插件
+2. 下载安装感染后的微信（链接:https://pan.baidu.com/s/1CkUu03DQDWZVTrtBYiYo3A  密码:97eo）
+3. 在QContainer Manager中菜单栏中选择模块，勾选插件使其生效
+3. 打开微信，观察日志和Sekiro长连接是否建立成功
