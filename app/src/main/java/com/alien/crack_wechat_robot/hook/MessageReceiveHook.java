@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alien.crack_wechat_robot.WechatHook;
 import com.alien.crack_wechat_robot.action.MessageAction;
-import com.alien.crack_wechat_robot.model.InteractionResult;
+import com.alien.crack_wechat_robot.model.brainserver.InteractionResult;
 import com.alien.crack_wechat_robot.util.OkHttpUtil;
 import com.camel.api.SharedObject;
 import com.camel.api.rposed.RC_MethodHook;
@@ -15,10 +15,7 @@ import com.camel.api.rposed.RposedHelpers;
 
 import java.io.IOException;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  * 消息拦截
@@ -91,6 +88,7 @@ public class MessageReceiveHook {
                 final String talker = contentValues.getAsString("talker");
                 final String msgId = contentValues.getAsString("msgId");
                 final String createTime = contentValues.getAsString("createTime");
+                Log.i(WechatHook.TAG, "contentValues: " + JSON.toJSONString(contentValues));
                 Log.i(WechatHook.TAG, talker + " send message:" + content);
                 try {
                     interact(content, talker);

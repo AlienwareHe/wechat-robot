@@ -1,4 +1,4 @@
-package com.alien.crack_wechat_robot.model;
+package com.alien.crack_wechat_robot.model.brainserver;
 
 public class InteractionResult<T> {
 
